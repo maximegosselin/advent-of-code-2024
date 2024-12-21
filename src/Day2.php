@@ -12,14 +12,28 @@ class Day2
         $f = fopen('input.txt', 'r');
         while (($line = fgets($f)) !== false) {
             $numbers = array_map('intval', explode(' ', $line));
-            if ($this->numbersAreIncreasingOrDecreasing(...$numbers)
-                && $this->numbersRespectAdjacentDistance(...$numbers)) {
+            if ($this->numbersAreSafe(...$numbers)) {
                 $valid++;
+            } else {
+                for ($i = 0; $i < count($numbers); $i++) {
+                    $numbersWithoutOne = $numbers;
+                    array_splice($numbersWithoutOne, $i, 1);
+                    if ($this->numbersAreSafe(...$numbersWithoutOne)) {
+                        $valid++;
+                        break;
+                    }
+                }
             }
         }
         fclose($f);
 
         echo sprintf('Valid reports: %d', $valid) . PHP_EOL;
+    }
+
+    private function numbersAreSafe(int ...$numbers): bool
+    {
+        return $this->numbersAreIncreasingOrDecreasing(...$numbers)
+            && $this->numbersRespectAdjacentDistance(...$numbers);
     }
 
     private function numbersAreIncreasingOrDecreasing(int ...$numbers): bool
